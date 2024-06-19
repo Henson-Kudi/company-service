@@ -22,8 +22,9 @@ const logFormat = format.combine(
 			timestamp?: string;
 			metadata?: { [key: string]: unknown };
 		}) => {
-			const filePath = (metadata?.file as string) || 'Unknown file';
-			return `${timestamp} [${level}]: ${message}\n [File Location]: ${filePath}`;
+			const filePath = metadata?.file;
+
+			return `${timestamp} [${level}]: ${message} ${filePath ? `\n[File Location]: ${filePath}` : ''}`;
 		}
 	)
 );

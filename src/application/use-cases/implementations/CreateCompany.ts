@@ -1,4 +1,5 @@
-import ICreateCompanyDTO from '../../../domain/dtos/CreateUser';
+import { DocumentType } from '@typegoose/typegoose';
+import ICreateCompanyDTO from '../../../domain/dtos/CreateCompanyDTO';
 import CompanySchema from '../../../domain/entities/Company';
 import ResponseCodes from '../../../domain/enums/ResponseCodes';
 import CustomError from '../../../domain/errors/CustomError';
@@ -13,8 +14,8 @@ export default class CreateCompanyUseCase implements ICreateCompany {
 		private companiesRepository: ICompanyRepository,
 		private providers: { rabbitMQProvider?: IRabbitMQProvider }
 		// Add more repositories and services needed by this use case
-	) {}
-	async execute(data: ICreateCompanyDTO): Promise<CompanySchema> {
+	) { }
+	async execute(data: ICreateCompanyDTO): Promise<DocumentType<CompanySchema>> {
 		const { rabbitMQProvider } = this.providers;
 		// We want to validate the data with JOi  schema first to ensure it is in format we want
 		// await createCompanySchema.validateAsync(data, {abortEarly: false})
@@ -36,7 +37,7 @@ export default class CreateCompanyUseCase implements ICreateCompany {
 		const company = await this.companiesRepository.create(data);
 
 		rabbitMQProvider &&
-			(await rabbitMQProvider.publishMessage({
+			(await rabbitMQProvider.publishMessage('exchange', {
 				exchange: rabbitMqQueues.COMPANY_EXCHANGE.name,
 				exchangeType: 'topic',
 				routeKey: rabbitMqQueues.COMPANY_EXCHANGE.routeKeys.companyCreated,

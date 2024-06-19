@@ -4,7 +4,7 @@ import mongoose from 'mongoose';
 import BaseDocument from '../valueObjects/baseDoc';
 import CompanyRep from '../valueObjects/CompanyRep';
 import Subscription from '../valueObjects/Subscription';
-import ICreateCompanyDTO from '../dtos/CreateUser';
+import ICreateCompanyDTO from '../dtos/CreateCompanyDTO';
 import slugifyString from '../../infrastructure/utils/slugifyString';
 
 @index(
@@ -17,7 +17,7 @@ import slugifyString from '../../infrastructure/utils/slugifyString';
 	}
 )
 @pre<Company>('save', function () {
-	this.nameSlug = slugifyString(this.name)
+	this.nameSlug = slugifyString(this.name);
 })
 export default class Company extends BaseDocument {
 	constructor(data: ICreateCompanyDTO) {
@@ -25,7 +25,7 @@ export default class Company extends BaseDocument {
 
 		Object.assign(this, data);
 
-		this.nameSlug = slugifyString(data.name)
+		this.nameSlug = slugifyString(data.name);
 
 		data.createdAt && (this.createdAt = data?.createdAt);
 	}

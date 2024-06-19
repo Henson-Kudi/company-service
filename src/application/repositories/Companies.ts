@@ -11,67 +11,67 @@ import {
 	mongo
 } from 'mongoose';
 
-import ICreateCompanyDTO from '../../domain/dtos/CreateUser';
+import ICreateCompanyDTO from '../../domain/dtos/CreateCompanyDTO';
 import CompanySchema from '../../domain/entities/Company';
+import { DocumentType } from '@typegoose/typegoose';
 
 export default interface ICompanyRepository {
-	create(company: ICreateCompanyDTO): Promise<CompanySchema>;
+	create(company: ICreateCompanyDTO): Promise<DocumentType<CompanySchema>>;
 
 	updateMany(
 		filter: FilterQuery<CompanySchema>,
 		update: UpdateQuery<CompanySchema>,
 		options?: mongo.UpdateOptions
-	): Promise<CompanySchema[]>;
+	): Promise<DocumentType<CompanySchema>[]>;
 
 	findByIdAndUpdate(
 		id: Types.ObjectId,
 		update: UpdateQuery<CompanySchema>,
 		options?: QueryOptions<CompanySchema>
-	): Promise<CompanySchema | null>;
+	): Promise<DocumentType<CompanySchema> | null>;
 
 	updateOne(
 		filter: FilterQuery<CompanySchema>,
 		update: UpdateQuery<CompanySchema>,
 		options?: QueryOptions<CompanySchema>
-	): Promise<CompanySchema | null>;
+	): Promise<DocumentType<CompanySchema> | null>;
 
 	findMany(
 		filter: FilterQuery<CompanySchema>,
 		projection?: ProjectionType<CompanySchema>,
 		options?: QueryOptions<CompanySchema>
-	): Promise<CompanySchema[]>;
+	): Promise<DocumentType<CompanySchema>[]>;
 
 	findOne(
 		filter: FilterQuery<CompanySchema>,
 		projection?: ProjectionType<CompanySchema>,
 		options?: QueryOptions<CompanySchema>
-	): Promise<CompanySchema | null>;
+	): Promise<DocumentType<CompanySchema> | null>;
 
 	findById(
 		id: Types.ObjectId,
 		projection?: ProjectionType<CompanySchema>,
 		options?: QueryOptions<CompanySchema>
-	): Promise<CompanySchema | null>;
+	): Promise<DocumentType<CompanySchema> | null>;
 
 	deleteMany(
-		filter: FilterQuery<CompanySchema>,
-		options?: mongo.DeleteOptions
-	): Promise<mongo.DeleteResult>;
+		filter: FilterQuery<CompanySchema>
+	): Promise<boolean>;
 
 	deleteOne(
 		filter: FilterQuery<CompanySchema>,
 		options?: QueryOptions<CompanySchema>
-	): Promise<CompanySchema | null>;
+	): Promise<boolean>;
 
 	findByIdAndDelete(
 		id: Types.ObjectId,
 		options?: QueryOptions<CompanySchema>
-	): Promise<CompanySchema | null>;
+	): Promise<boolean>;
 
-	aggregate(
+	aggregate<T>(
 		pipeline: PipelineStage[],
 		options?: AggregateOptions
-	): Promise<unknown[]>;
+	): Promise<T[]>; //When doing an aggregatation, you can define the return type you expect
 
 	bulkWrite(
 		operation: AnyBulkWriteOperation<CompanySchema>[],
