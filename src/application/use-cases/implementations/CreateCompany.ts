@@ -11,13 +11,14 @@ import ICreateCompany from '../interfaces/ICreateCommpany';
 import CreateCompanySchema from '../../../domain/schemas/Company.schema';
 import logger from '../../../infrastructure/utils/logging/winstonLogger';
 import validateJoiSchemaAsync from '../../../infrastructure/utils/validateJoiSchema';
+import moment from 'moment';
 
 export default class CreateCompanyUseCase implements ICreateCompany {
 	constructor(
 		private companiesRepository: ICompanyRepository,
 		private providers: { messagingProvider?: IMessagingProvider }
 		// Add more repositories and services needed by this use case
-	) {}
+	) { }
 	async execute(data: ICreateCompanyDTO): Promise<DocumentType<CompanySchema>> {
 		const { messagingProvider } = this.providers;
 		// We want to validate the data with JOi  schema first to ensure it is in format we want
@@ -33,6 +34,22 @@ export default class CreateCompanyUseCase implements ICreateCompany {
 		if (alreadyExist) {
 			throw new CustomError(
 				`Company (${alreadyExist.name}) already exists.`,
+				ResponseCodes.BadRequest
+			);
+		}
+
+		// Ensure subscription end date is ahead of subscription start date and subscription end date is in the future
+		const {
+			subScription: { start, end }
+		} = data;
+
+		const startDate = moment(start);
+		const endDate = moment(end);
+		const now = moment();
+
+		if (endDate.isSameOrBefore(startDate) || endDate.isSameOrBefore(now)) {
+			throw new CustomError(
+				'End date must be in future of start date and now!',
 				ResponseCodes.BadRequest
 			);
 		}
