@@ -1,16 +1,16 @@
-import IRabbitMQProvider from '../../../../application/providers/RabbitMq.provider';
+import IMessagingProvider from '../../../../application/providers/messaging.provider';
 import CreateCompanyUseCase from '../../../../application/use-cases/implementations/CreateCompany';
 import CreateCompanyController from '../../../../presentation/http/controllers/CompanyController/CreateCompany.controller';
 import IContoller from '../../../../presentation/http/controllers/IController';
 import CompaniesRepositoryMongo from '../../../repositories/Companies';
 
 export default function createCompanyComposer(
-	rabbitMQProvider?: IRabbitMQProvider
+	messagingProvider?: IMessagingProvider
 ): IContoller {
 	const companyRepo = new CompaniesRepositoryMongo();
 
 	const createCompanyUseCase = new CreateCompanyUseCase(companyRepo, {
-		rabbitMQProvider
+		messagingProvider
 	});
 
 	const controller = new CreateCompanyController(createCompanyUseCase);

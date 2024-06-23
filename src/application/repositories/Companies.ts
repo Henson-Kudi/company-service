@@ -54,9 +54,7 @@ export default interface ICompanyRepository {
 		options?: QueryOptions<CompanySchema>
 	): Promise<DocumentType<CompanySchema> | null>;
 
-	deleteMany(
-		filter: FilterQuery<CompanySchema>
-	): Promise<boolean>;
+	deleteMany(filter: FilterQuery<CompanySchema>): Promise<boolean>;
 
 	deleteOne(
 		filter: FilterQuery<CompanySchema>,

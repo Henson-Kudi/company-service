@@ -1,8 +1,10 @@
+import envConf from './infrastructure/config/env.conf';
 import connectToMongoDb from './infrastructure/databases/mongodb/index.db';
 import RabbitMq, {
 	listenForConnectionFailures
 } from './infrastructure/providers/config/rabbitMq/connection';
-import RabbitMQProvider from './infrastructure/providers/rabbitMQProvider';
+import MessagingProvider from './infrastructure/providers/messagingProvider';
+import logger from './infrastructure/utils/logging/winstonLogger';
 import startServer from './presentation/express/settings/server';
 
 (async () => {
@@ -14,8 +16,13 @@ import startServer from './presentation/express/settings/server';
 	// Listen for failure events on rabbit mq
 	listenForConnectionFailures(rabbitMqConnection);
 
-	const rabbitMqProvider = new RabbitMQProvider(rabbitMqConnection);
+	const messagingProvider = new MessagingProvider(rabbitMqConnection);
 
 	// Start server
-	startServer(rabbitMqProvider);
-})();
+	startServer(messagingProvider);
+})()
+	.then(() => logger.info('App up and running'))
+	.catch((err) => {
+		logger.error(err);
+		envConf.NODE_ENV !== 'dev' && process.exit(1);
+	});

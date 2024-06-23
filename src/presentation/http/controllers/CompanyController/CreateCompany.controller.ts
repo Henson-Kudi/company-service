@@ -7,15 +7,18 @@ import IHttpRequest from '../../helpers/IHttpRequest';
 import IHttpResponse from '../../helpers/IHttpResponse';
 import HttpResponse from '../../helpers/implementations/HttpResponse';
 import IContoller from '../IController';
+import CreateCompanySchema from '../../../../domain/schemas/Company.schema';
+import validateJoiSchemaAsync from '../../../../infrastructure/utils/validateJoiSchema';
 
 export default class CreateCompanyController implements IContoller {
-	constructor(private useCase: ICreateCompanyUseCase) { }
+	constructor(private useCase: ICreateCompanyUseCase) {}
 
 	async handle(request: IHttpRequest): Promise<IHttpResponse> {
 		try {
 			const data: ICreateCompanyDTO = request.body as ICreateCompanyDTO;
 
-			// Maybe we need to validate request body with joi schemas here as well
+			// Validate request body with joi before creating document
+			await validateJoiSchemaAsync(CreateCompanySchema, data);
 
 			const response = await this.useCase.execute(data);
 

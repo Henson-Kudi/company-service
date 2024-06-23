@@ -1,15 +1,15 @@
 import { BulkWriteResult } from 'mongodb';
 import {
-    FilterQuery,
-    UpdateQuery,
-    QueryOptions,
-    Types,
-    PipelineStage,
-    AggregateOptions,
-    AnyBulkWriteOperation,
-    MongooseBulkWriteOptions,
-    mongo,
-    ProjectionType
+	FilterQuery,
+	UpdateQuery,
+	QueryOptions,
+	Types,
+	PipelineStage,
+	AggregateOptions,
+	AnyBulkWriteOperation,
+	MongooseBulkWriteOptions,
+	mongo,
+	ProjectionType
 } from 'mongoose';
 import CompaniesRepository from '../../application/repositories/Companies';
 import ICreateCompanyDTO from '../../domain/dtos/CreateCompanyDTO';
@@ -18,137 +18,131 @@ import CompanyModel from '../databases/mongodb/models/CompanyModel';
 import { DocumentType } from '@typegoose/typegoose/lib/types';
 
 export default class CompaniesRepositoryMongo implements CompaniesRepository {
-    async create(
-        company: ICreateCompanyDTO
-    ): Promise<DocumentType<CompanySchema>> {
-        const newCompany = new CompanySchema(company);
+	async create(
+		company: ICreateCompanyDTO
+	): Promise<DocumentType<CompanySchema>> {
+		const newCompany = new CompanySchema(company);
 
-        const created = await CompanyModel.create(newCompany);
+		const created = await CompanyModel.create(newCompany);
 
-        return created;
-    }
+		return created;
+	}
 
-    async updateMany(
-        filter: FilterQuery<CompanySchema>,
-        update: UpdateQuery<CompanySchema>,
-        options?: mongo.UpdateOptions
-    ): Promise<DocumentType<CompanySchema>[]> {
-        await CompanyModel.updateMany(filter, update, options);
+	async updateMany(
+		filter: FilterQuery<CompanySchema>,
+		update: UpdateQuery<CompanySchema>,
+		options?: mongo.UpdateOptions
+	): Promise<DocumentType<CompanySchema>[]> {
+		await CompanyModel.updateMany(filter, update, options);
 
-        const updatedData = await CompanyModel.find(filter);
+		const updatedData = await CompanyModel.find(filter);
 
-        return updatedData;
-    }
+		return updatedData;
+	}
 
-    findByIdAndUpdate(
-        id: Types.ObjectId,
-        update: UpdateQuery<CompanySchema>,
-        options?: QueryOptions<CompanySchema>
-    ): Promise<DocumentType<CompanySchema> | null> {
-        const updated = CompanyModel.findByIdAndUpdate(id, update, {
-            ...options,
-            new: options?.new ?? true
-        });
+	findByIdAndUpdate(
+		id: Types.ObjectId,
+		update: UpdateQuery<CompanySchema>,
+		options?: QueryOptions<CompanySchema>
+	): Promise<DocumentType<CompanySchema> | null> {
+		const updated = CompanyModel.findByIdAndUpdate(id, update, {
+			...options,
+			new: options?.new ?? true
+		});
 
-        return updated;
-    }
+		return updated;
+	}
 
-    updateOne(
-        filter: FilterQuery<CompanySchema>,
-        update: UpdateQuery<CompanySchema>,
-        options?: QueryOptions<CompanySchema>
-    ): Promise<DocumentType<CompanySchema> | null> {
-        const updated = CompanyModel.findOneAndUpdate(filter, update, {
-            ...options,
-            new: options?.new ?? true
-        });
+	updateOne(
+		filter: FilterQuery<CompanySchema>,
+		update: UpdateQuery<CompanySchema>,
+		options?: QueryOptions<CompanySchema>
+	): Promise<DocumentType<CompanySchema> | null> {
+		const updated = CompanyModel.findOneAndUpdate(filter, update, {
+			...options,
+			new: options?.new ?? true
+		});
 
-        return updated;
-    }
+		return updated;
+	}
 
-    async findMany(
-        filter: FilterQuery<CompanySchema>,
-        projection?: ProjectionType<CompanySchema>,
-        options?: QueryOptions<CompanySchema>
-    ): Promise<DocumentType<CompanySchema>[]> {
-        const found = await CompanyModel.find(filter, projection, options);
+	async findMany(
+		filter: FilterQuery<CompanySchema>,
+		projection?: ProjectionType<CompanySchema>,
+		options?: QueryOptions<CompanySchema>
+	): Promise<DocumentType<CompanySchema>[]> {
+		const found = await CompanyModel.find(filter, projection, options);
 
-        return found;
-    }
+		return found;
+	}
 
-    async findOne(
-        filter: FilterQuery<CompanySchema>,
-        projection?: ProjectionType<CompanySchema>,
-        options?: QueryOptions<CompanySchema>
-    ): Promise<DocumentType<CompanySchema> | null> {
-        const found = await CompanyModel.findOne(filter, projection, options);
+	async findOne(
+		filter: FilterQuery<CompanySchema>,
+		projection?: ProjectionType<CompanySchema>,
+		options?: QueryOptions<CompanySchema>
+	): Promise<DocumentType<CompanySchema> | null> {
+		const found = await CompanyModel.findOne(filter, projection, options);
 
-        return found;
-    }
+		return found;
+	}
 
-    async findById(
-        id: Types.ObjectId,
-        projection?: ProjectionType<CompanySchema>,
-        options?: QueryOptions<CompanySchema>
-    ): Promise<DocumentType<CompanySchema> | null> {
-        const found = await CompanyModel.findById(id, projection, options);
+	async findById(
+		id: Types.ObjectId,
+		projection?: ProjectionType<CompanySchema>,
+		options?: QueryOptions<CompanySchema>
+	): Promise<DocumentType<CompanySchema> | null> {
+		const found = await CompanyModel.findById(id, projection, options);
 
-        return found;
-    }
+		return found;
+	}
 
-    async deleteMany(
-        filter: FilterQuery<CompanySchema>
-    ): Promise<boolean> {
-        const deleted = await CompanyModel.updateMany(filter, {
-            isActive: false,
-            isDeleted: true
-        });
+	async deleteMany(filter: FilterQuery<CompanySchema>): Promise<boolean> {
+		const deleted = await CompanyModel.updateMany(filter, {
+			isActive: false,
+			isDeleted: true
+		});
 
-        return deleted?.modifiedCount ? true : false;
-    }
+		return deleted?.modifiedCount ? true : false;
+	}
 
-    async deleteOne(
-        filter: FilterQuery<CompanySchema>
-    ): Promise<boolean> {
-        const found = await CompanyModel.findOne(filter)
+	async deleteOne(filter: FilterQuery<CompanySchema>): Promise<boolean> {
+		const found = await CompanyModel.findOne(filter);
 
-        if (found) {
-            found.isDeleted = true
-            found.isActive = false
+		if (found) {
+			found.isDeleted = true;
+			found.isActive = false;
 
-            await found.save()
-        }
+			await found.save();
+		}
 
-        return found ? true : false;
-    }
+		return found ? true : false;
+	}
 
-    async findByIdAndDelete(
-        id: Types.ObjectId
-    ): Promise<boolean> {
-        const found = await CompanyModel.findById(id)
+	async findByIdAndDelete(id: Types.ObjectId): Promise<boolean> {
+		const found = await CompanyModel.findById(id);
 
-        if (found) {
-            found.isDeleted = true
-            found.isActive = false
+		if (found) {
+			found.isDeleted = true;
+			found.isActive = false;
 
-            await found.save()
-        }
+			await found.save();
+		}
 
-        return found ? true : false;
-    }
+		return found ? true : false;
+	}
 
-    async aggregate<T>(
-        pipeline: PipelineStage[],
-        options?: AggregateOptions
-    ): Promise<T[]> {
-        //Define the structure of what you expect and the aggregation pipeline will return an array of ur expectation
-        return await CompanyModel.aggregate<T>(pipeline, options);
-    }
+	async aggregate<T>(
+		pipeline: PipelineStage[],
+		options?: AggregateOptions
+	): Promise<T[]> {
+		//Define the structure of what you expect and the aggregation pipeline will return an array of ur expectation
+		return await CompanyModel.aggregate<T>(pipeline, options);
+	}
 
-    bulkWrite(
-        operation: AnyBulkWriteOperation<CompanySchema>[],
-        options?: MongooseBulkWriteOptions
-    ): Promise<BulkWriteResult> {
-        return CompanyModel.bulkWrite(operation, options);
-    }
+	bulkWrite(
+		operation: AnyBulkWriteOperation<CompanySchema>[],
+		options?: MongooseBulkWriteOptions
+	): Promise<BulkWriteResult> {
+		return CompanyModel.bulkWrite(operation, options);
+	}
 }

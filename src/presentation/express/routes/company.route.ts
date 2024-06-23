@@ -1,26 +1,21 @@
 import { Router } from 'express';
-import IRabbitMQProvider from '../../../application/providers/RabbitMq.provider';
-import expressAdapter from '../../adapters/expressAdapter';
-import createCompanyComposer from '../../../infrastructure/services/composers/company/CreateCompany';
+import IMessagingProvider from '../../../application/providers/messaging.provider';
+import createCompanyHandler from './handlers/createCompanyHandler';
+import updateCompanyHandler from './handlers/updateCompanyHandler';
+import updateCompanySubscriptionHandler from './handlers/updateCompanySubscription';
 
 export default function companyRoutes(
-	rabbitMQProvider: IRabbitMQProvider
+	messagingProvider: IMessagingProvider
 ): Router {
 	const router = Router();
 
-	router.route('/').post(async (req, res, next) => {
-		try {
-			const response = await expressAdapter(
-				req,
-				createCompanyComposer(rabbitMQProvider)
-			);
 
-			res.status(response.code).json(response);
-			next();
-		} catch (err) {
-			next(err);
-		}
-	});
+	router.route('/').post(createCompanyHandler(messagingProvider));
+
+	// Need to implement middleware that allows only company owner (creatore of companny) to edit details about company (update/delete/get)
+
+	router.route('/:id').put(updateCompanyHandler(messagingProvider));
+	router.put('/:id/subscription', updateCompanySubscriptionHandler(messagingProvider));
 
 	return router;
 }

@@ -1,12 +1,11 @@
 import ResponseCodes from '../../../../domain/enums/ResponseCodes';
-import CustomError from '../../../../domain/errors/CustomError';
 import IHttpResponse from '../IHttpResponse';
 
 export default class HttpResponse implements IHttpResponse {
 	constructor(
 		public code: ResponseCodes,
 		public data: {
-			error?: CustomError;
+			error?: unknown;
 			data?: unknown;
 		}
 	) {

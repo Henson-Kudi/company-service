@@ -1,10 +1,9 @@
 import ResponseCodes from '../../../domain/enums/ResponseCodes';
-import CustomError from '../../../domain/errors/CustomError';
 
 type IHttpResponse = {
 	code: ResponseCodes;
 	data: {
-		error?: CustomError;
+		error?: unknown;
 		data?: unknown;
 	};
 	success: boolean;

@@ -22,7 +22,7 @@ export interface QueueConfig {
 	};
 }
 
-export default interface IRabbitMQProvider {
+export default interface IMessagingProvider {
 	publishMessage(to: 'exchange', config: ExchangeConfiq): Promise<boolean>;
 
 	publishMessage(to: 'queue', config: QueueConfig): Promise<boolean>;

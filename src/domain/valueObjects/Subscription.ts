@@ -2,7 +2,7 @@ import { prop } from '@typegoose/typegoose';
 import SubscriptionPackage from '../enums/SubscriptionPackage';
 
 interface ISubscription {
-	pakage: SubscriptionPackage;
+	package: SubscriptionPackage;
 	start: Date;
 	end: Date;
 }
@@ -15,11 +15,17 @@ export default class Subscription implements ISubscription {
 	) {
 		endDate && (this.end = endDate);
 		startDate && (this.start = startDate);
-		packageType && (this.pakage = packageType);
+		packageType && (this.package = packageType);
 	}
 
-	@prop({ required: true, enum: Object.values(SubscriptionPackage) })
-	public pakage!: SubscriptionPackage;
+	@prop({
+		required: true,
+		enum: Object.values(SubscriptionPackage).filter(
+			(item): item is number => typeof item === 'number'
+		),
+		type: () => Number
+	})
+	public package!: SubscriptionPackage;
 
 	@prop({ required: true })
 	public start!: Date;
