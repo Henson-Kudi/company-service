@@ -30,6 +30,10 @@ export default interface ICompanyRepository {
 		options?: QueryOptions<CompanySchema>
 	): Promise<DocumentType<CompanySchema> | null>;
 
+	countDocuments(
+		filter?:FilterQuery<DocumentType<CompanySchema>>
+	): Promise<number>;
+
 	updateOne(
 		filter: FilterQuery<CompanySchema>,
 		update: UpdateQuery<CompanySchema>,

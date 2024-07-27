@@ -18,6 +18,9 @@ import CompanyModel from '../databases/mongodb/models/CompanyModel';
 import { DocumentType } from '@typegoose/typegoose/lib/types';
 
 export default class CompaniesRepositoryMongo implements CompaniesRepository {
+	countDocuments(filter?: FilterQuery<DocumentType<CompanySchema>>): Promise<number> {
+		return CompanyModel.countDocuments(filter);
+	}
 	async create(
 		company: ICreateCompanyDTO
 	): Promise<DocumentType<CompanySchema>> {
